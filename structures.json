@@ -1,0 +1,23 @@
+{
+    "armored_wall":2000,
+    "metal_wall":1000,
+    "stone_wall":500,
+    "wooden_wall":250,
+
+    "armored_door":1000,
+    "garage_door":600,
+    "sheet_metal_door":250,
+    "ladder_hatch":250,
+    "wooden_door":200,
+
+    "strengthened_glass_window":350,
+    "metal_shop_front": 750,
+    "chain_link_fence": 100,
+    "metal_embrasure": 500,
+    "reinforced_window": 500,
+    "vending_machine": 1250,
+    "auto_turret": 1000,
+
+    "external_wooden_wall": 500,
+    "external_stone_wall": 500
+}

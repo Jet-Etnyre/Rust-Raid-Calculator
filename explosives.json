@@ -1,0 +1,204 @@
+{
+    "c4": {
+        "raw_materials": {
+            "sulfur": 2200,
+            "charcoal": 3000,
+            "metal_fragments": 200,
+            "low_grade_fuel": 60,
+            "tech_trash": 2,
+            "cloth": 5
+        },
+        "damage_per_structure": {
+            "armored_wall": 275,
+            "metal_wall": 275,
+            "stone_wall": 275,
+            "wooden_wall": 495,
+            "armored_door": 440,
+            "garage_door": 440,
+            "sheet_metal_door": 440,
+            "ladder_hatch": 440,
+            "wooden_door": 1100,
+            "strengthened_glass_window": 275,
+            "metal_shop_front": 275,
+            "chain_link_fence": 550,
+            "metal_embrasure": 275,
+            "reinforced_window": 275,
+            "vending_machine": 550,
+            "auto_turret": 1100,
+            "external_wooden_wall": 495,
+            "external_stone_wall": 275
+        }
+    },
+
+    "rocket": {
+        "raw_materials": {
+            "sulfur": 1400,
+            "charcoal": 1950,
+            "metal_fragments": 100,
+            "low_grade_fuel": 30,
+            "metal_pipe": 2
+        },
+        "damage_per_structure": {
+            "armored_wall": 137.575,
+            "metal_wall": 137.575,
+            "stone_wall": 137.65,
+            "wooden_wall": 247.65,
+            "armored_door": 220.375,
+            "garage_door": 220.375,
+            "sheet_metal_door": 220.375,
+            "ladder_hatch": 220.375,
+            "wooden_door": 550.375,
+            "strengthened_glass_window": 137.575,
+            "metal_shop_front": 137.575,
+            "chain_link_fence": 275.375,
+            "metal_embrasure": 138.25,
+            "reinforced_window": 137.575,
+            "vending_machine": 138.25,
+            "auto_turret": 312.5,
+            "external_wooden_wall": 247.65,
+            "external_stone_wall": 137.65
+        }
+    },
+
+    "high_velocity_rocket": {
+        "raw_materials": {
+            "sulfur": 200,
+            "charcoal": 300,
+            "metal_pipe": 1
+        },
+        "damage_per_structure": {
+            "armored_wall": 15.0075,
+            "metal_wall": 15.0075,
+            "stone_wall": 15.75,
+            "wooden_wall": 29.25,
+            "armored_door": 24,
+            "garage_door": 24,
+            "sheet_metal_door": 24,
+            "ladder_hatch": 24,
+            "wooden_door": 63.75,
+            "strengthened_glass_window": 15.0075,
+            "metal_shop_front": 15.0075,
+            "chain_link_fence": 30,
+            "metal_embrasure": 16.5,
+            "reinforced_window": 15.0075,
+            "vending_machine": 15.015,
+            "auto_turret": 345,
+            "external_wooden_wall": 29.25,
+            "external_stone_wall": 15.75
+        }
+    },
+
+    "explosive_ammo": {
+        "raw_materials": {
+            "sulfur": 25,
+            "charcoal": 30,
+            "metal_fragments": 5
+        },
+        "damage_per_structure": {
+            "armored_wall": 2.506,
+            "metal_wall": 2.506,
+            "stone_wall": 2.704,
+            "wooden_wall": 5.1072,
+            "armored_door": 4.0064,
+            "garage_door": 4.0064,
+            "sheet_metal_door": 4.0064,
+            "ladder_hatch": 4.0064,
+            "wooden_door": 11.016,
+            "strengthened_glass_window": 2.506,
+            "metal_shop_front": 2.506,
+            "chain_link_fence": 5.008,
+            "metal_embrasure": 2.904,
+            "reinforced_window": 2.506,
+            "vending_machine": 2.508,
+            "auto_turret": 9.008,
+            "external_wooden_wall": 5.1072,
+            "external_stone_wall": 2.704
+        }
+    },
+
+    "f1_grenade": {
+        "raw_materials": {
+            "sulfur": 60,
+            "charcoal": 90,
+            "metal_fragments": 25
+        },
+        "damage_per_structure": {
+            "armored_wall": 1.0075,
+            "metal_wall": 1.0075,
+            "stone_wall": 2.75,
+            "wooden_wall": 4.25,
+            "armored_door": 5,
+            "garage_door": 5,
+            "sheet_metal_door": 5,
+            "ladder_hatch": 5,
+            "wooden_door": 8.75,
+            "strengthened_glass_window": 1.0075,
+            "metal_shop_front": 0.10375,
+            "chain_link_fence": 5,
+            "metal_embrasure": 1.75,
+            "reinforced_window": 1.0075,
+            "vending_machine": 1.0075,
+            "auto_turret": 107.5,
+            "external_wooden_wall": 4.25,
+            "external_stone_wall": 2.75
+        }
+    },
+
+    "satchel_charge": {
+        "raw_materials": {
+            "sulfur": 480,
+            "charcoal": 720,
+            "metal_fragments": 80,
+            "cloth": 10,
+            "rope": 1
+        },
+        "damage_per_structure": {
+            "armored_wall": 43.5,
+            "metal_wall": 43.5,
+            "stone_wall": 51.5,
+            "wooden_wall": 91.5,
+            "armored_door": 70,
+            "garage_door": 70,
+            "sheet_metal_door": 70,
+            "ladder_hatch": 70,
+            "wooden_door": 170,
+            "strengthened_glass_window": 43.5,
+            "metal_shop_front": 43.5,
+            "chain_link_fence": 85,
+            "metal_embrasure": 41.5,
+            "reinforced_window": 43.5,
+            "vending_machine": 87,
+            "auto_turret": 550,
+            "external_wooden_wall": 91.5,
+            "external_stone_wall": 51.5
+        }
+    },
+
+    "beancan_grenade": {
+        "raw_materials": {
+            "sulfur": 60,
+            "charcoal": 90,
+            "metal_fragments": 20
+        },
+        "damage_per_structure": {
+            "armored_wall": 9,
+            "metal_wall": 9,
+            "stone_wall": 11,
+            "wooden_wall": 19.5,
+            "armored_door": 14.5,
+            "garage_door": 14.5,
+            "sheet_metal_door": 14.5,
+            "ladder_hatch": 14.5,
+            "wooden_door": 35,
+            "strengthened_glass_window": 9,
+            "metal_shop_front": 7.65,
+            "chain_link_fence": 17.5,
+            "metal_embrasure": 8.5,
+            "reinforced_window": 9,
+            "vending_machine": 9,
+            "auto_turret": 65,
+            "external_wooden_wall": 19.5,
+            "external_stone_wall": 11
+        }
+    }
+}
