@@ -23,6 +23,7 @@ This project is intended for personal or experimental use. Once a solver is adde
 ## 📁 Project Contents
 ├─ raid_calculator.py # Core logic (to be implemented with optimization)
 ├─ README.md
+└─ LICENSE # MIT License terms
 
 ---
 
