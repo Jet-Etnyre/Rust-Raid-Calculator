@@ -21,8 +21,12 @@ This project is intended for personal or experimental use. Once a solver is adde
 --
 
 ## 📁 Project Contents
-├─ raid_calculator.py # Core logic (to be implemented with optimization)
-├─ README.md
+.
+├─ app.py # Simple flask app
+├─ raid_calculator.py # Core logic for computing sulfur-efficient raids
+├─ explosives.json # JSON file with explosive stats and damage tables
+├─ structures.json # JSON file with HP values for each structure
+├─ README.md # Project overview and usage instructions
 └─ LICENSE # MIT License terms
 
 ---
