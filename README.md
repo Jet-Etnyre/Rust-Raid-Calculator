@@ -4,21 +4,25 @@ A Python-based tool that helps players of **Rust** plan raids by minimizing sulf
 
 ---
 
-## 🔥 What It Does
-- Calculates the most sulfur-efficient way to raid any structure in the game
-- Uses real in-game values for structure HP and explosive damage
-- Lets you specify which explosives are available to use
-- Outputs a suggested combination of explosives to meet or exceed the target HP
+## Features
+- Calculates total sulfur cost for chosen combinations of explosives
+- Breaks down the resource cost (e.g., charcoal, low grade fuel, metal fragments)
+- Supports a wide range of structures (e.g., metal walls, garage doors, turrets)
+- Uses real in-game damage values for each explosive against different structures
 
 ---
 
-## 🛠️ How to Use
-This project is intended for personal or experimental use. Once a solver is added, you'll be able to input:
-1. The structure you're targeting
-2. Which explosives you currently have access to
-3. The tool will return the cheapest sulfur path to destroy the target
+## Optimization Engine
 
---
+The tool  uses **PuLP**, a linear programming library, to automatically determine the most resource-efficient combination of explosives needed to destroy selected structures.
+
+### How it Works
+- The user selects the types and quantities of structures to raid alongside available explosives.
+- For each structure instance, the program sets up a constraint to ensure the explosives deal at least the required damage (with a small buffer to prevent leftover health).
+- The solver minimizes total sulfur usage while satisfying all damage constraints using integer counts of explosives.
+- PuLP's built-in CBC (Coin-or Branch and Cut) solver is used to find the optimal combination.
+
+---
 
 ## 📁 Project Contents
 .
@@ -32,7 +36,7 @@ This project is intended for personal or experimental use. Once a solver is adde
 ---
 
 ## 🚧 Status
-This project is a work in progress. Solver logic will be added to automate the optimization process and handle edge cases like splash damage or soft-side raids.
+This project is a work in progress. The optimization logic is complete, working on polishing a web app for ease of use
 
 ---
 
