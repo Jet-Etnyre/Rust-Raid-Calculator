@@ -1,0 +1,45 @@
+<!doctype html>
+<title>Sulfur Optimizer</title>
+<h1>Sulfur Optimizer</h1>
+<form method="post">
+  <label>Select structures and quantities:</label><br>
+  {% for struct in structures %}
+    <input type="checkbox" name="structures" value="{{struct}}" {% if struct in selected_structures %}checked{% endif %}>
+    {{struct}}
+    <input type="number" name="qty_{{struct}}" min="1" value="{{selected_structures[struct] if struct in selected_structures else ''}}">
+    <br>
+  {% endfor %}
+  <br>
+  <label>Select explosives (Ctrl+Click to select multiple):</label><br>
+  <select name="explosives" multiple size="6" required>
+    {% for explosive in explosives %}
+      <option value="{{explosive}}" {% if explosive in selected_explosives %}selected{% endif %}>{{explosive}}</option>
+    {% endfor %}
+  </select><br><br>
+  <input type="submit" value="Optimize">
+</form>
+{% if results %}
+  <h2>Optimization Results</h2>
+  {% for struct, qty in results['structure_breakdown'].items() %}
+    <h3>{{struct}} (x{{qty}}):</h3>
+    <ul>
+      {% for exp, used in results['structure_usage'][struct].items() %}
+        <li>{{exp}}: {{used}}</li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+  <h3>Total Explosives Used:</h3>
+  <ul>
+    {% for exp, total in results['explosive_totals'].items() %}
+      <li>{{exp}}: {{total}}</li>
+    {% endfor %}
+  </ul>
+  <h3>Total Sulfur Cost: {{results['sulfur_cost']}}</h3>
+  <h3>Total Resources Required:</h3>
+  <ul>
+    {% for material, amount in results['total_resources'].items() %}
+      <li>{{material}}: {{amount}}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<a href="{{ url_for('index') }}">Back to Home</a>

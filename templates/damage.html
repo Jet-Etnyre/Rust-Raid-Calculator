@@ -1,0 +1,27 @@
+<!doctype html>
+<title>Damage Per Structure</title>
+<h1>Damage Per Structure</h1>
+<form method="post">
+    <label for="structure">Select structure:</label>
+    <select name="structure" required>
+        {% for structure in structures %}
+            <option value="{{structure}}" {% if structure == selected_structure %}selected{% endif %}>{{structure}}</option>
+        {% endfor %}
+    </select><br><br>
+    <label>Select explosives (Ctrl+Click to select multiple):</label><br>
+    <select name="explosives" multiple size="6" required>
+        {% for explosive in explosives %}
+            <option value="{{explosive}}" {% if explosive in selected_explosives %}selected{% endif %}>{{explosive}}</option>
+        {% endfor %}
+    </select><br><br>
+    <input type="submit" value="Show Damage">
+</form>
+{% if damages %}
+    <h2>Damage values for {{selected_structure}} ({{structures[selected_structure]}} HP):</h2>
+    <ul>
+    {% for explosive, damage in damages.items() %}
+        <li>{{explosive}}: {{damage}} HP</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+<a href="{{ url_for('index') }}">Back to Home</a>

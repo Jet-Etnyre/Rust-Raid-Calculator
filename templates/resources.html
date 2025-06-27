@@ -1,0 +1,24 @@
+<!doctype html>
+<title>Resource Calculator</title>
+<h1>Resource Calculator</h1>
+<form method="post">
+  <label for="explosive_type">Explosive type:</label>
+  <select name="explosive_type">
+    {% for exp in explosives %}
+      <option value="{{exp}}">{{exp}}</option>
+    {% endfor %}
+  </select><br>
+  <label for="quantity">Quantity:</label>
+  <input name="quantity" type="number" min="1" required><br>
+  <input type="submit" value="Calculate">
+</form>
+{% if result %}
+  <h2>Resources Required:</h2>
+  <ul>
+    <h3>Total for {{request.form['explosive_type']}} ({{request.form['quantity']}}):</h3>
+    {% for material, amount in result.items() %}
+      <li>{{material}}: {{amount}}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<a href="{{ url_for('index') }}">Back to Home</a>
