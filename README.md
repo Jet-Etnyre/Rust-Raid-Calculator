@@ -40,5 +40,11 @@ This project is a work in progress. The optimization logic is complete, working 
 
 ---
 
+## Dependencies
+
+- [PuLP](https://github.com/coin-or/pulp): Used for solving the optimization problem that determines the most sulfur-efficient explosive combination.
+
+---
+
 ## 📜 License
 This project is open-source and available under the **MIT License**.
