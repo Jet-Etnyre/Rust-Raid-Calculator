@@ -114,7 +114,7 @@ while user_selection != '0':
                 for exp, count in explosives_count.items():
                     print(f"{exp}: {count}")
             
-            # Display totals for all explosives and resources
+             # Display totals for all explosives and resources
             print("Total explosives crafted:")
             for exp, count in explosives_count.items():
                 print(f"{exp}: {count}")
@@ -243,20 +243,22 @@ while user_selection != '0':
             print("Available explosives:")
             for explosive in explosives.keys():
                 print(f"- {explosive}")
-            explosive_set = set()
+            explosive_dict = dict()
             while True:
-                print(f"Current selection: {', '.join(explosive_set) if explosive_set else '(none)'}")
+                print(f"Current selection: {', '.join((f"{key}:{value}") for key, value in explosive_dict.items()) if explosive_dict else '(none)'}")
                 explosive_input = input(
                     "Enter an explosive to add/remove "
                     "(or 'done' to finish, 'all' for all explosives, 'list' to show all explosives): \n"
                 ).strip().lower()
                 if explosive_input == 'done':
-                    if not explosive_set:
+                    if not explosive_dict:
                         print("You must select at least one explosive before continuing.")
                         continue
                     break
                 elif explosive_input == 'all':
-                    explosive_set = set(explosives.keys())
+                    for exp in explosives.keys():
+                        if exp not in explosive_dict:
+                            explosive_dict[exp] = 0
                     print("All explosives added.")
                     continue
                 elif explosive_input == 'list':
@@ -270,14 +272,24 @@ while user_selection != '0':
 
                 # Find the actual case-sensitive explosive name
                 actual_exp = next(exp for exp in explosives.keys() if exp.lower() == explosive_input)
-                if actual_exp in explosive_set:
-                    explosive_set.remove(actual_exp)
+                if actual_exp in explosive_dict:
+                    explosive_dict.pop(actual_exp)
                     print(f"Removed '{actual_exp}' from selection.")
                 else:
-                    explosive_set.add(actual_exp)
-                    print(f"Added '{actual_exp}' to selection.")
+                    while True:
+                        qty_input = input(f"Enter the quantity for {actual_exp}: \n")
+                        try:
+                            qty = int(qty_input)
+                            if qty < 0:
+                                print("Quantity must 0 or greater. Please try again.")
+                                continue
+                            explosive_dict[actual_exp] = qty
+                            print(f"Added '{actual_exp}' (x{qty}) to selection.")
+                            break
+                        except ValueError:
+                            print("Quantity must be an integer. Please try again.")
 
-            explosive_list = list(explosive_set)
+            explosive_list = list(explosive_dict.keys())
 
             # --- Begin Linear Programming Model Setup ---
             prob = LpProblem("Rust_Raid_Optimizer", LpMinimize)
@@ -288,63 +300,125 @@ while user_selection != '0':
             for struct, qty in selected_structures.items():
                 for i in range(qty):
                     for exp in explosive_list:
-                        explosive_vars[(exp, struct, i)] = LpVariable(f"{exp}_{struct}_{i+1}", 0, cat='Integer')
+                        explosive_vars[(exp, struct, i)] = LpVariable(f"{exp}_{struct}_{i+1}", explosive_dict[exp], cat='Integer')
 
-            # Objective: Minimize total sulfur cost across all explosives and structures
+            owned_vars = {}
+            crafted_vars = {}
+
+            for struct, qty in selected_structures.items():
+                for i in range(qty):
+                    for exp in explosive_list:
+                        owned_vars[(exp, struct, i)] = LpVariable(f"owned_{exp}_{struct}_{i+1}", 0, cat='Integer')
+                        crafted_vars[(exp, struct, i)] = LpVariable(f"crafted_{exp}_{struct}_{i+1}", 0, cat='Integer')
+
+            # Constraint: total owned used ≤ owned amount
+            for exp in explosive_list:
+                prob += lpSum([owned_vars[(exp, struct, i)] for struct, qty in selected_structures.items() for i in range(qty)]) <= explosive_dict[exp]
+
+            # Objective: minimize sulfur cost (only crafted explosives cost sulfur)
             prob += lpSum([
-                explosive_vars[(exp, struct, i)] * explosives[exp]['raw_materials']['sulfur']
-                for (exp, struct, i) in explosive_vars
+                crafted_vars[(exp, struct, i)] * explosives[exp]['raw_materials']['sulfur']
+                for (exp, struct, i) in crafted_vars
             ]), "Total_Sulfur_Cost"
 
-            # Constraints: Each structure instance must be destroyed (with a 1 HP buffer)
-            for (struct, qty) in selected_structures.items():
-                for i in range(qty):
-                    prob += lpSum([
-                        explosive_vars[(exp, struct, i)] * explosives[exp]['damage_per_structure'][struct]
-                        for exp in explosive_list
-                    ]) >= structures[struct] + 1, f"{struct}_{i+1}" # Add 1 HP buffer to ensure structure breaks due to float precision in damage values
+            # Calculate max single-hit damage for each structure
+            max_damage = {struct: max(explosives[exp]['damage_per_structure'][struct] for exp in explosive_list) for struct in selected_structures}
 
+            # Damage constraints: both owned and crafted count toward damage
+            for struct, qty in selected_structures.items():
+                for i in range(qty):
+                    # Lower bound: must destroy the structure
+                    prob += lpSum([
+                        (owned_vars[(exp, struct, i)] + crafted_vars[(exp, struct, i)]) * explosives[exp]['damage_per_structure'][struct]
+                        for exp in explosive_list
+                    ]) >= structures[struct], f"{struct}_{i+1}_lower"
+                    # Upper bound: don't use way more than needed
+                    prob += lpSum([
+                        (owned_vars[(exp, struct, i)] + crafted_vars[(exp, struct, i)]) * explosives[exp]['damage_per_structure'][struct]
+                        for exp in explosive_list
+                    ]) <= structures[struct] + max_damage[struct], f"{struct}_{i+1}_upper"
+            
             # Solve the optimization problem using PuLP's default solver
             prob.solve()
 
-            # Output results
             print("Optimization Results:")
 
-            # Breakdown by structure: how much of each explosive is used on each structure
+            # Breakdown by structure: how much of each explosive is used on each structure, split by owned/crafted
             for struct, qty in selected_structures.items():
                 print(f"\n{struct} (x{qty}):")
                 for exp in explosive_list:
-                    used = sum(
-                        int(explosive_vars[(exp, struct, i)].varValue)
+                    used_owned = sum(
+                        int(owned_vars[(exp, struct, i)].varValue)
                         for i in range(qty)
-                        if explosive_vars[(exp, struct, i)].varValue and explosive_vars[(exp, struct, i)].varValue > 0
+                        if owned_vars[(exp, struct, i)].varValue and owned_vars[(exp, struct, i)].varValue > 0
                     )
-                    if used > 0:
-                        print(f"  {exp}: {used}")
+                    used_crafted = sum(
+                        int(crafted_vars[(exp, struct, i)].varValue)
+                        for i in range(qty)
+                        if crafted_vars[(exp, struct, i)].varValue and crafted_vars[(exp, struct, i)].varValue > 0
+                    )
+                    total_used = used_owned + used_crafted
+                    if total_used > 0:
+                        print(f"  {exp}: {total_used} (owned: {used_owned}, crafted: {used_crafted})")
 
-            # Then, display total used for each explosive across all structures
+            # Breakdown by structure instance: how much of each explosive is used on each individual structure, split by owned/crafted
+            for struct, qty in selected_structures.items():
+                for i in range(qty):
+                    print(f"\n{struct} #{i+1}:")
+                    for exp in explosive_list:
+                        used_owned = int(owned_vars[(exp, struct, i)].varValue) if owned_vars[(exp, struct, i)].varValue else 0
+                        used_crafted = int(crafted_vars[(exp, struct, i)].varValue) if crafted_vars[(exp, struct, i)].varValue else 0
+                        total_used = used_owned + used_crafted
+                        if total_used > 0:
+                            print(f"  {exp}: {total_used} (owned: {used_owned}, crafted: {used_crafted})")
+
+            # Totals for each explosive across all structures
             explosive_totals = {}
-            for (exp, struct, i), var in explosive_vars.items():
-                if var.varValue and var.varValue > 0:
-                    explosive_totals[exp] = explosive_totals.get(exp, 0) + int(var.varValue)
+            explosive_owned_totals = {}
+            explosive_crafted_totals = {}
+            for (exp, struct, i) in explosive_vars:
+                owned = int(owned_vars[(exp, struct, i)].varValue) if owned_vars[(exp, struct, i)].varValue else 0
+                crafted = int(crafted_vars[(exp, struct, i)].varValue) if crafted_vars[(exp, struct, i)].varValue else 0
+                explosive_totals[exp] = explosive_totals.get(exp, 0) + owned + crafted
+                explosive_owned_totals[exp] = explosive_owned_totals.get(exp, 0) + owned
+                explosive_crafted_totals[exp] = explosive_crafted_totals.get(exp, 0) + crafted
 
             print("\nTotal Explosives Used:")
-            for exp, total in explosive_totals.items():
-                print(f"{exp}: {total}")
+            for exp in explosive_list:
+                print(f"{exp}: {explosive_totals.get(exp,0)} (owned: {explosive_owned_totals.get(exp,0)}, crafted: {explosive_crafted_totals.get(exp,0)})")
 
             # Print total sulfur cost for the solution
-            print(f"\nTotal Sulfur Cost: {int(value(prob.objective))}")
+            print(f"\nTotal Sulfur Cost (crafted only): {int(value(prob.objective))}")
 
-            # Aggregate and display total resources required for the solution
-            print("Total Resources Required:")
+            # Aggregate and display total resources required for the solution (owned + crafted)
+            print("\nTotal Resources Required (owned + crafted):")
             total_resources = {}
-            for (exp, struct, i), var in explosive_vars.items():
-                if var.varValue and var.varValue > 0:
-                    resource = calculate_resources(exp, int(var.varValue))
+            for (exp, struct, i) in explosive_vars:
+                total = (int(owned_vars[(exp, struct, i)].varValue) if owned_vars[(exp, struct, i)].varValue else 0) + \
+                        (int(crafted_vars[(exp, struct, i)].varValue) if crafted_vars[(exp, struct, i)].varValue else 0)
+                if total > 0:
+                    resource = calculate_resources(exp, total)
                     for material, amount in resource.items():
                         total_resources[material] = total_resources.get(material, 0) + amount
             for material, amount in total_resources.items():
                 print(f"{material}: {amount}")
+
+            # Aggregate and display total resources required for the crafted explosives only
+            print("\nTotal Resources Required (crafted only):")
+            crafted_resources = {}
+            for (exp, struct, i) in crafted_vars:
+                crafted = int(crafted_vars[(exp, struct, i)].varValue) if crafted_vars[(exp, struct, i)].varValue else 0
+                if crafted > 0:
+                    resource = calculate_resources(exp, crafted)
+                    for material, amount in resource.items():
+                        crafted_resources[material] = crafted_resources.get(material, 0) + amount
+
+            if crafted_resources:
+                for material, amount in crafted_resources.items():
+                    print(f"{material}: {amount}")
+            else:
+                print("No crafted resources required. All explosives can be owned.")
+
           
         except ValueError as e:
             print(e)

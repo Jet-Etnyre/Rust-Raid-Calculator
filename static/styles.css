@@ -1,0 +1,21 @@
+#instance-breakdown-container {
+  position: absolute;
+  top: 80px;
+  right: 40px;
+  width: 350px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #888;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px #ccc;
+}
+@media (max-width: 900px) {
+  #instance-breakdown-container {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-top: 20px;
+  }
+}

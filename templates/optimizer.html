@@ -10,14 +10,29 @@
     <br>
   {% endfor %}
   <br>
-  <label>Select explosives (Ctrl+Click to select multiple):</label><br>
-  <select name="explosives" multiple size="6" required>
-    {% for explosive in explosives %}
-      <option value="{{explosive}}" {% if explosive in selected_explosives %}selected{% endif %}>{{explosive}}</option>
+  <label>Select explosives and how many you already own:</label><br>
+  <table>
+    <tr>
+      <th>Use?</th>
+      <th>Explosive</th>
+      <th>Owned</th>
+    </tr>
+    {% for exp in explosives %}
+    <tr>
+      <td>
+        <input type="checkbox" name="use_{{exp}}" {% if explosive_dict and exp in explosive_dict %}checked{% endif %}>
+      </td>
+      <td>{{exp}}</td>
+      <td>
+        <input type="number" name="owned_{{exp}}" min="0" value="{% if explosive_dict and exp in explosive_dict %}{{explosive_dict[exp]}}{% else %}0{% endif %}">
+      </td>
+    </tr>
     {% endfor %}
-  </select><br><br>
+  </table>
+  <br>
   <input type="submit" value="Optimize">
 </form>
+
 {% if results %}
   <h2>Optimization Results</h2>
   {% for struct, qty in results['structure_breakdown'].items() %}
@@ -41,5 +56,25 @@
       <li>{{material}}: {{amount}}</li>
     {% endfor %}
   </ul>
+{% endif %}
+{% if results.structure_instance_usage %}
+<div id="instance-breakdown-container">
+  <h3>Structure Instance Breakdown</h3>
+  {% for struct, instances in results.structure_instance_usage.items() %}
+    <strong>{{ struct }}</strong>
+    <ul style="margin-bottom: 12px;">
+      {% for usage in instances %}
+        <li>
+          <b>#{{ loop.index }}</b>:
+          <ul>
+            {% for exp, detail in usage.items() %}
+              <li>{{ exp }}: {{ detail.total }} (owned: {{ detail.owned }}, crafted: {{ detail.crafted }})</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
 {% endif %}
 <a href="{{ url_for('index') }}">Back to Home</a>
