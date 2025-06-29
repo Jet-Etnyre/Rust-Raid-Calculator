@@ -26,12 +26,16 @@ The tool  uses **PuLP**, a linear programming library, to automatically determin
 
 ## 📁 Project Contents
 .
-├─ app.py # Simple flask app
-├─ raid_calculator.py # Core logic for computing sulfur-efficient raids
-├─ explosives.json # JSON file with explosive stats and damage tables
-├─ structures.json # JSON file with HP values for each structure
-├─ README.md # Project overview and usage instructions
-└─ LICENSE # MIT License terms
+├── LICENSE                  # MIT license file
+├── README.md                # Project overview and setup instructions
+├── app.py                   # Flask web interface for raid input and optimization output
+├── raid_calculator.py       # Core logic for sulfur cost minimization and damage modeling using PuLP
+├── explosives.json          # Stores explosive damage values and material costs
+├── structures.json          # Stores structure types and their corresponding HP values
+├── static/
+│   └── styles.css           # Styling for the web interface
+├── templates/
+│   └── [HTML files]         # HTML templates for Flask (e.g. index.html, results.html)
 
 ---
 
